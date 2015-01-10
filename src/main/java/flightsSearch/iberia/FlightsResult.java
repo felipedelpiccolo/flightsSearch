@@ -3,7 +3,6 @@ package flightsSearch.iberia;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -33,7 +32,6 @@ public class FlightsResult {
 	}
 	
 	private void selectJourneyBestPrice(final WebElement journeyFlights) {
-		//sortByPrice(journeyFlights);
 		final List<WebElement> fares = journeyFlights.findElements(By.cssSelector("li.odd"));
 		int minFare = 9999;
 		WebElement minFareElement = null;
@@ -51,13 +49,6 @@ public class FlightsResult {
 		
 		
 		minFareElement.click();
-	}
-	
-	private void sortByPrice(final WebElement journeyFlights) {
-		final JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-		jsExecutor.executeScript("putOrderTracking1('price')");
-		jsExecutor.executeScript("putOrderTracking2('price')");
-		Utils.waitTimeToLoad(2);
 	}
 	
 	private Integer getPriceFromSring(String priceAndCurrency) {
