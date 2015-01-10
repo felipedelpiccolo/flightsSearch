@@ -1,12 +1,12 @@
 package flightsSearch;
 
-import java.util.Date;
+import org.joda.time.LocalDate;
 
 public class Route {
 
 	private String from;
 	private String to;
-	private Date departureDate;
+	private LocalDate departureDate;
 	
 	public String getFrom() {
 		return from;
@@ -24,11 +24,11 @@ public class Route {
 		this.to = to;
 	}
 
-	public Date getDepartureDate() {
+	public LocalDate getDepartureDate() {
 		return departureDate;
 	}
 
-	public void setDepartureDate(Date departureDate) {
+	public void setDepartureDate(LocalDate departureDate) {
 		this.departureDate = departureDate;
 	}
 	

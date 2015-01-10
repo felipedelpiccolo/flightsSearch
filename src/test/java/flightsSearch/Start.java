@@ -1,16 +1,15 @@
 package flightsSearch;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +29,7 @@ public class Start {
 	
 	private WebDriver driver;
 
-	private static final DateFormat timeInstance = new SimpleDateFormat("dd/mm/yyyy");
+	private static final DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("MM/dd/yyyy");
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,33 +51,19 @@ public class Start {
 	public void start() throws Exception {
 		final IberiaFlightSearch iberiaFlightSearch = new IberiaFlightSearch(driver);
 
-		final Calendar calendarFrom = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		calendarFrom.setTime(new Date());
-		
-		final Calendar calendarTo = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		calendarTo.setTime(new Date());
-		calendarTo.add(Calendar.DAY_OF_MONTH, 15);
-		
 		final Route routeFrom = new Route();
 		routeFrom.setTo("Buenos Aires");
 		routeFrom.setFrom("Madrid");
+		routeFrom.setDepartureDate(new LocalDate().plusDays(15));
 		
 		final Route routeTo = new Route();
 		routeTo.setTo("Berlin");
 		routeTo.setFrom("Buenos Aires");
+		routeTo.setDepartureDate(routeFrom.getDepartureDate().plusMonths(1));
 		
 		final Map<Itinerary, Integer> faresByItinerary = new HashMap<Itinerary, Integer>(); 
 		
-		int i = 1;
-		
-		while (i <= 5) {
-			calendarFrom.add(Calendar.DAY_OF_MONTH, 1);
-			routeFrom.setDepartureDate(calendarFrom.getTime());
-			
-			calendarTo.add(Calendar.DAY_OF_MONTH, i);
-			routeTo.setDepartureDate(calendarTo.getTime());
-			
-			i++;
+		while (Days.daysBetween(routeFrom.getDepartureDate(), routeTo.getDepartureDate()).getDays() > 7) {
 			
 			final Itinerary itinerary = new Itinerary();
 			itinerary.setRouteFrom(routeFrom);
@@ -88,12 +73,14 @@ public class Start {
 				final Integer fare = iberiaFlightSearch.searchBestFares(itinerary);
 				faresByItinerary.put(itinerary, fare);
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.println("!!!!---Error searching for itinerary: ");
 				printItinerary(itinerary);
 				System.out.println("!!!--------------------------------!!!");
 			}
 			
-			
+			routeFrom.setDepartureDate(routeFrom.getDepartureDate().plusDays(1));
+						
 		}
 		
 		printFares(faresByItinerary);
@@ -117,12 +104,12 @@ public class Start {
 		System.out.println("Segment 1: ");
 		System.out.println("From: " + itinerary.getRouteFrom().getFrom());
 		System.out.println("To: " + itinerary.getRouteFrom().getTo());
-		System.out.println("Date: " + timeInstance.format(itinerary.getRouteFrom().getDepartureDate()));
+		System.out.println("Date: " + dateFormatter.print(itinerary.getRouteFrom().getDepartureDate()));
 		
 		System.out.println("Segment 2: ");
 		System.out.println("From: " + itinerary.getRouteTo().getFrom());
 		System.out.println("To: " + itinerary.getRouteTo().getTo());
-		System.out.println("Date: " + timeInstance.format(itinerary.getRouteTo().getDepartureDate()));
+		System.out.println("Date: " + dateFormatter.print(itinerary.getRouteTo().getDepartureDate()));
 	}
 	
 	@After
