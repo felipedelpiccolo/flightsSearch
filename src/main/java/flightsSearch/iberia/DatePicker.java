@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import flightsSearch.Utils;
+import flightsSearch.utils.Utils;
 
 public class DatePicker {
 

@@ -2,9 +2,11 @@ package flightsSearch.iberia;
 
 import org.openqa.selenium.WebDriver;
 
-import flightsSearch.Itinerary;
+import flightsSearch.CompanySearch;
+import flightsSearch.model.Itinerary;
+import flightsSearch.model.RouteFare;
 
-public class IberiaFlightSearch {
+public class IberiaFlightSearch implements CompanySearch {
 
 	private final WebDriver driver;
 
@@ -20,14 +22,12 @@ public class IberiaFlightSearch {
 		this.flightsResult = new FlightsResult(driver);
 	}
 
-	public Integer searchBestFares(final Itinerary itinerary) {
+	public RouteFare searchBestFares(final Itinerary itinerary) {
 		driver.get(baseSearchUrl);
-		
+
 		searchForm.search(itinerary);
-		
+
 		return flightsResult.getBestPrice();
 	}
-
-	
 
 }

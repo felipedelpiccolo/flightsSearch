@@ -1,4 +1,4 @@
-package flightsSearch;
+package flightsSearch.model;
 
 import org.joda.time.LocalDate;
 

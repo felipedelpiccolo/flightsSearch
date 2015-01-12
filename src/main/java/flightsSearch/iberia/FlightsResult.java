@@ -6,7 +6,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import flightsSearch.Utils;
+import flightsSearch.model.RouteFare;
+import flightsSearch.utils.Utils;
 
 public class FlightsResult {
 
@@ -17,41 +18,42 @@ public class FlightsResult {
 		this.driver = driver;
 	}
 	
-	public Integer getBestPrice() {
+	public RouteFare getBestPrice() {
 		final WebElement outboundFlights = driver.findElement(By.className("from-fly-table"));
-		selectJourneyBestPrice(outboundFlights);
+		final Integer outboundBestFare = selectJourneyBestPrice(outboundFlights);
 		
 		driver.findElement(By.className("from-to-breakpoint")).click();
 		Utils.waitTimeToLoad(1);
 		
 		final WebElement inboundFlights = driver.findElement(By.className("return-fly-table"));
-		selectJourneyBestPrice(inboundFlights);
+		final Integer inboundBestFare = selectJourneyBestPrice(inboundFlights);
 		
-		final String priceAndCurrency = driver.findElement(By.cssSelector("span.total-price")).getText();
-		return getPriceFromSring(priceAndCurrency);
+		final RouteFare routeBestFare = new RouteFare();
+		routeBestFare.setInboundFare(inboundBestFare);
+		routeBestFare.setOutboundFare(outboundBestFare);
+		return routeBestFare;
 	}
 	
-	private void selectJourneyBestPrice(final WebElement journeyFlights) {
+	private Integer selectJourneyBestPrice(final WebElement journeyFlights) {
 		final List<WebElement> fares = journeyFlights.findElements(By.cssSelector("li.odd"));
 		int minFare = 9999;
-		WebElement minFareElement = null;
+		
 		for (final WebElement fareElement : fares) {
 			if(fareElement.getAttribute("class").contains("not-available")) {
 				continue;
 			}
 			final WebElement priceLabel = fareElement.findElement(By.cssSelector("label"));
-			final Integer fare = getPriceFromSring(priceLabel.getText());
+			final Integer fare = getPriceFromString(priceLabel.getText());
 			if (fare < minFare ) {
 				minFare = fare;
-				minFareElement = fareElement;
 			}
 		}
 		
 		
-		minFareElement.click();
+		return minFare;
 	}
 	
-	private Integer getPriceFromSring(String priceAndCurrency) {
+	private Integer getPriceFromString(String priceAndCurrency) {
 		//Remove last 2 digits for decimals
 		priceAndCurrency = priceAndCurrency.replaceAll("\\.\\d\\d", "");
 		//Remove any non number character 
