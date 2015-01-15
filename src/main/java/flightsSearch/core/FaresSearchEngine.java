@@ -1,6 +1,6 @@
 package flightsSearch.core;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.joda.time.Days;
@@ -8,6 +8,7 @@ import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 
 import flightsSearch.CompanySearch;
+import flightsSearch.dao.FaresDao;
 import flightsSearch.model.Itinerary;
 import flightsSearch.model.Route;
 import flightsSearch.model.RouteFare;
@@ -17,8 +18,11 @@ public class FaresSearchEngine {
 
 	private CompanySearch companySearch;
 
-	public FaresSearchEngine(final CompanySearch companySearch) {
+	private FaresDao faresDao;
+	
+	public FaresSearchEngine(final CompanySearch companySearch, final FaresDao faresDao) {
 		this.companySearch = companySearch;
+		this.faresDao = faresDao;
 	}
 
 	public void searchFares(final Interval timeInterval,
@@ -32,16 +36,16 @@ public class FaresSearchEngine {
 		final Map<Itinerary, RouteFare> faresByItinerary = searchFares(
 				itinerary.getRouteFrom(), itinerary.getRouteTo());
 
-		Utils.printFares(faresByItinerary);
+		faresDao.saveFaresByItinerary(faresByItinerary);
 		
 	}
 
 	private Map<Itinerary, RouteFare> searchFares(final Route routeFrom,
 			final Route routeTo) {
 
-		final LocalDate originalDD = routeFrom.getDepartureDate();
+		final LocalDate originalDD = new LocalDate(routeFrom.getDepartureDate());
 		
-		final Map<Itinerary, RouteFare> faresByItinerary = new HashMap<Itinerary, RouteFare>();
+		final Map<Itinerary, RouteFare> faresByItinerary = new LinkedHashMap<Itinerary, RouteFare>();
 
 		while (Days.daysBetween(routeFrom.getDepartureDate(),
 				routeTo.getDepartureDate()).getDays() > 7) {
@@ -71,8 +75,8 @@ public class FaresSearchEngine {
 	private void getBestFare(Route routeFrom, Route routeTo,
 			Map<Itinerary, RouteFare> faresByItinerary) {
 		final Itinerary itinerary = new Itinerary();
-		itinerary.setRouteFrom(routeFrom);
-		itinerary.setRouteTo(routeTo);
+		itinerary.setRouteFrom(new Route(routeFrom));
+		itinerary.setRouteTo(new Route(routeTo));
 
 		try {
 			final RouteFare routeBestFare = companySearch

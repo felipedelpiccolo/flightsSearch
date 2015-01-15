@@ -11,7 +11,7 @@ import flightsSearch.model.RouteFare;
 
 public class Utils {
 
-	private static final DateTimeFormatter dateFormatter = DateTimeFormat
+	public static final DateTimeFormatter dateFormatter = DateTimeFormat
 			.forPattern("MM/dd/yyyy");
 
 	

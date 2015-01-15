@@ -8,6 +8,16 @@ public class Route {
 	private String to;
 	private LocalDate departureDate;
 	
+	public Route(final Route route) {
+		this.from = route.from;
+		this.to = route.to;
+		this.departureDate = route.departureDate;
+	}
+	
+	public Route() {
+		super();
+	}
+
 	public String getFrom() {
 		return from;
 	}

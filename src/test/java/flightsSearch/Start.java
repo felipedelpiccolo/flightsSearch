@@ -15,6 +15,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import flightsSearch.core.FaresSearchEngine;
+import flightsSearch.dao.FileBasedFaresDao;
 import flightsSearch.iberia.IberiaFlightSearch;
 import flightsSearch.model.Itinerary;
 import flightsSearch.model.Route;
@@ -49,7 +50,7 @@ public class Start {
 
 		iberiaFlightSearch = new IberiaFlightSearch(driver);
 		
-		faresSearchEngine = new FaresSearchEngine(iberiaFlightSearch);
+		faresSearchEngine = new FaresSearchEngine(iberiaFlightSearch, new FileBasedFaresDao());
 
 	}
 
@@ -71,7 +72,7 @@ public class Start {
 		itinerary.setRouteTo(routeTo);
 		
 		final DateTime start = new DateTime().plusMonths(1);
-		final DateTime end = start.plusMonths(1);
+		final DateTime end = start.plusMonths(3);
 		
 		faresSearchEngine.searchFares(new Interval(start, end), itinerary);
 
