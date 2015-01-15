@@ -22,9 +22,6 @@ public class FlightsResult {
 		final WebElement outboundFlights = driver.findElement(By.className("from-fly-table"));
 		final Integer outboundBestFare = selectJourneyBestPrice(outboundFlights);
 		
-		driver.findElement(By.className("from-to-breakpoint")).click();
-		Utils.waitTimeToLoad(1);
-		
 		final WebElement inboundFlights = driver.findElement(By.className("return-fly-table"));
 		final Integer inboundBestFare = selectJourneyBestPrice(inboundFlights);
 		
