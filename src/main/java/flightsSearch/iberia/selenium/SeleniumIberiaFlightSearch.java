@@ -1,4 +1,4 @@
-package flightsSearch.iberia;
+package flightsSearch.iberia.selenium;
 
 import org.openqa.selenium.WebDriver;
 
@@ -6,17 +6,17 @@ import flightsSearch.CompanySearch;
 import flightsSearch.model.Itinerary;
 import flightsSearch.model.RouteFare;
 
-public class IberiaFlightSearch implements CompanySearch {
+public class SeleniumIberiaFlightSearch implements CompanySearch {
 
 	private final WebDriver driver;
 
-	private static final String baseSearchUrl = "http://www.iberia.com/web/obsmenu.do?language=en&country=GB&quadrigam=IBMUSE&quickaccess=true";
+	private static final String baseSearchUrl = "http://www.iberia.com/web/obsmenu.do?language=en&country=AR&quadrigam=IBMUSE&quickaccess=true";
 
 	private final SearchForm searchForm;
 
 	private final FlightsResult flightsResult;
 
-	public IberiaFlightSearch(final WebDriver driver) {
+	public SeleniumIberiaFlightSearch(final WebDriver driver) {
 		this.driver = driver;
 		this.searchForm = new SearchForm(driver);
 		this.flightsResult = new FlightsResult(driver);

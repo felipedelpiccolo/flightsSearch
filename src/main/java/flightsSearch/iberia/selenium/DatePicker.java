@@ -1,4 +1,4 @@
-package flightsSearch.iberia;
+package flightsSearch.iberia.selenium;
 
 import org.joda.time.LocalDate;
 import org.joda.time.Months;

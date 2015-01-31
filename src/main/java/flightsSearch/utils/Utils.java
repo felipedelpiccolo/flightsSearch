@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
 
 import flightsSearch.model.Itinerary;
 import flightsSearch.model.RouteFare;
@@ -23,33 +24,33 @@ public class Utils {
 		}
 	}
 	
-	public static void printFares(final Map<Itinerary, RouteFare> faresByItinerary) {
+	public static void printFares(final Map<Itinerary, RouteFare> faresByItinerary, final Logger logger) {
 
 		for (final Iterator<Itinerary> itineraries = faresByItinerary.keySet()
 				.iterator(); itineraries.hasNext();) {
 			final Itinerary itinerary = itineraries.next();
-			System.out.println("Fare found for itinerary: ");
-			printItinerary(itinerary);
-			System.out.println("Route From Fare: " + faresByItinerary.get(itinerary).getOutboundFare());
-			System.out.println("Route To Fare: " + faresByItinerary.get(itinerary).getInboundFare());
-			System.out.println("-------------------------------------------");
+			logger.info("Fare found for itinerary: ");
+			printItinerary(itinerary, logger);
+			logger.info("Route From Fare: " + faresByItinerary.get(itinerary).getOutboundFare());
+			logger.info("Route To Fare: " + faresByItinerary.get(itinerary).getInboundFare());
+			logger.info("-------------------------------------------");
 
 		}
 	}
 
-	public static void printItinerary(final Itinerary itinerary) {
+	public static void printItinerary(final Itinerary itinerary, final Logger logger) {
 
-		System.out.println("Segment 1: ");
-		System.out.println("From: " + itinerary.getRouteFrom().getFrom());
-		System.out.println("To: " + itinerary.getRouteFrom().getTo());
-		System.out.println("Date: "
+		logger.info("Segment 1: ");
+		logger.info("From: " + itinerary.getRouteFrom().getFrom());
+		logger.info("To: " + itinerary.getRouteFrom().getTo());
+		logger.info("Date: "
 				+ dateFormatter.print(itinerary.getRouteFrom()
 						.getDepartureDate()));
 
-		System.out.println("Segment 2: ");
-		System.out.println("From: " + itinerary.getRouteTo().getFrom());
-		System.out.println("To: " + itinerary.getRouteTo().getTo());
-		System.out.println("Date: "
+		logger.info("Segment 2: ");
+		logger.info("From: " + itinerary.getRouteTo().getFrom());
+		logger.info("To: " + itinerary.getRouteTo().getTo());
+		logger.info("Date: "
 				+ dateFormatter
 						.print(itinerary.getRouteTo().getDepartureDate()));
 	}

@@ -1,6 +1,7 @@
 package flightsSearch.steps;
 
 import java.io.File;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
@@ -10,12 +11,15 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import cucumber.api.Format;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import flightsSearch.CompanySearch;
 import flightsSearch.core.FaresSearchEngine;
 import flightsSearch.dao.FileBasedFaresDao;
-import flightsSearch.iberia.IberiaFlightSearch;
+import flightsSearch.iberia.http.HttpIberiaFlightSearch;
+import flightsSearch.iberia.selenium.SeleniumIberiaFlightSearch;
 import flightsSearch.model.Itinerary;
 import flightsSearch.model.Route;
 
@@ -26,7 +30,10 @@ public class SearchBestFaresSteps {
 	private Itinerary itinerary;
 	private Interval interval;
 
-	//TODO to injected via spring IOD
+	private Interval departureDateInterval;
+	private Interval arrivalDateInterval;
+
+	// TODO to injected via spring IOD
 	private final String chromeDriverPath = this.getClass()
 			.getResource("/chromedriver.exe").getPath();
 
@@ -34,28 +41,35 @@ public class SearchBestFaresSteps {
 
 	private WebDriver driver;
 
-	private IberiaFlightSearch iberiaFlightSearch;
-	
+	private CompanySearch iberiaFlightSearch;
+
 	@Given("^Things are setup$")
 	public void setUp() throws Exception {
-		chromeService = new ChromeDriverService.Builder()
-				.usingDriverExecutable(new File(chromeDriverPath))
-				.usingAnyFreePort().build();
+		// chromeService = new ChromeDriverService.Builder()
+		// .usingDriverExecutable(new File(chromeDriverPath))
+		// .usingAnyFreePort().build();
+		//
+		// chromeService.start();
+		//
+		// driver = new RemoteWebDriver(chromeService.getUrl(),
+		// DesiredCapabilities.chrome());
+		//
+		// driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 
-		chromeService.start();
+		// iberiaFlightSearch = new SeleniumIberiaFlightSearch(driver);
 
-		driver = new RemoteWebDriver(chromeService.getUrl(),
-				DesiredCapabilities.chrome());
+		iberiaFlightSearch = new HttpIberiaFlightSearch("gb", "en");
 
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-
-		iberiaFlightSearch = new IberiaFlightSearch(driver);
-		
-		faresSearchEngine = new FaresSearchEngine(iberiaFlightSearch, new FileBasedFaresDao());
+		faresSearchEngine = new FaresSearchEngine(iberiaFlightSearch,
+				new FileBasedFaresDao());
 
 	}
 
-	
+	@Then("^tear down$")
+	public void tearDown() throws Exception {
+		driver.close();
+	}
+
 	@Given("^An itinerary with the route from (.+) to (.+)$")
 	public void createItinerayWithRouteFrom(String from, String to) {
 		Route routeFrom = new Route();
@@ -81,9 +95,39 @@ public class SearchBestFaresSteps {
 		interval = new Interval(fromDate, toDate);
 	}
 
+	@And("^the interval of time is from (.+) to (.+)$")
+	public void createTheIntervalOfTimeWithDates(
+			@Format("dd/MM/yyyy") Date dateFrom,
+			@Format("dd/MM/yyyy") Date dateTo) {
+
+		interval = new Interval(new DateTime(dateFrom), new DateTime(dateTo));
+	}
+
 	@Then("^I search fares$")
 	public void searchFares() {
 		faresSearchEngine.searchFares(interval, itinerary);
+	}
+
+	@And("^departure date is between (.+) and (.+)$")
+	public void createDepartureIntervalOfTime(
+			@Format("dd/MM/yyyy") Date dateFrom,
+			@Format("dd/MM/yyyy") Date dateTo) {
+		departureDateInterval = new Interval(new DateTime(dateFrom),
+				new DateTime(dateTo));
+	}
+
+	@And("^arrival date is between (.+) and (.+)$")
+	public void createArrivalIntervalOfTime(
+			@Format("dd/MM/yyyy") Date dateFrom,
+			@Format("dd/MM/yyyy") Date dateTo) {
+		arrivalDateInterval = new Interval(new DateTime(dateFrom),
+				new DateTime(dateTo));
+	}
+
+	@Then("^I search fares between dates$")
+	public void searchFaresBetweenDates() {
+		faresSearchEngine.searchFaresInBetweenDates(departureDateInterval,
+				arrivalDateInterval, itinerary);
 	}
 
 	public void setFaresSearchEngine(FaresSearchEngine faresSearchEngine) {

@@ -1,4 +1,4 @@
-package flightsSearch.iberia;
+package flightsSearch.iberia.selenium;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import flightsSearch.model.Itinerary;
+import flightsSearch.model.Route;
 import flightsSearch.model.RouteFare;
 import flightsSearch.utils.Utils;
 
@@ -16,8 +17,12 @@ public class FileBasedFaresDao implements FaresDao {
 		
 		PrintWriter fileWriter = null;
 		
+		final Itinerary firstItinerary = faresByItinerary.keySet().iterator().next();
+		final Route firstRouteFrom = firstItinerary.getRouteFrom();
+		final Route secondRouteTo = firstItinerary.getRouteTo();
+		
 		try {
-			fileWriter = new PrintWriter("fares-by-itinerary.txt", "UTF-8");
+			fileWriter = new PrintWriter("fares-for-"+firstRouteFrom.getFrom()+"-"+firstRouteFrom.getTo()+"-"+secondRouteTo.getFrom()+"-"+secondRouteTo.getTo()+".txt", "UTF-8");
 			
 			for (final Iterator<Itinerary> itineraries = faresByItinerary.keySet()
 					.iterator(); itineraries.hasNext();) {

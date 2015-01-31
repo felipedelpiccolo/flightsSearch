@@ -1,4 +1,4 @@
-package flightsSearch.iberia;
+package flightsSearch.iberia.selenium;
 
 import java.util.List;
 
